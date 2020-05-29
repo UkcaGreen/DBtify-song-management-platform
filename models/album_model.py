@@ -2,6 +2,7 @@ import sqlite3
 
 TABLENAME = "ALBUMS"
 
+
 class AlbumModel:
 
     def __init__(self):
@@ -13,15 +14,15 @@ class AlbumModel:
         self.connection.close()
 
     def create(self, title, genre):
-        
+
         query = f"""
         INSERT INTO {TABLENAME} 
         (title, genre) 
         VALUES ("{title}","{genre}");
         """
-        
+
         result = self.cursor.execute(query)
-        
+
         return "OK"
 
     def list(self):
@@ -32,7 +33,7 @@ class AlbumModel:
         """
 
         self.cursor.execute(query)
-        
+
         elements = self.cursor.fetchall()
 
         result = [{"id": e[0], "title": e[1], "genre": e[2]} for e in elements]

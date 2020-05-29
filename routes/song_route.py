@@ -4,18 +4,19 @@ from services.song_service import SongService
 song_bp = Blueprint("song_bp", __name__)
 
 
-@song_bp.route('/list',methods=["GET"])
+@song_bp.route('/list', methods=["GET"])
 def list():
-    return jsonify(SongService().list())
+    context = request.args
+    return jsonify(SongService().list(context))
 
 
-@song_bp.route('/create',methods=["GET"])
+@song_bp.route('/create', methods=["GET"])
 def create():
     context = request.args
     return SongService().create(context)
 
 
-@song_bp.route('/update',methods=["GET"])
+@song_bp.route('/update', methods=["GET"])
 def create():
     context = request.args
     return SongService().update(context)

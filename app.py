@@ -1,10 +1,10 @@
 from flask import Flask
 from models.schema import Schema
 
-#from view.album_view import song_bp
-from view.artist_view import artist_bp
-#from view.song_view import song_bp
-from view.listener_view import listener_bp
+from routes.album_route import album_bp
+from routes.artist_route import artist_bp
+from routes.song_route import song_bp
+from routes.listener_route import listener_bp
 
 import sqlite3
 
@@ -20,4 +20,6 @@ if __name__ == '__main__':
     Schema()
     app.register_blueprint(artist_bp, url_prefix="/artist")
     app.register_blueprint(listener_bp, url_prefix="/listener")
+    app.register_blueprint(song_bp, url_prefix="/song")
+    app.register_blueprint(album_bp, url_prefix="/album")
     app.run(debug=True)

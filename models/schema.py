@@ -6,8 +6,8 @@ class Schema:
         print("hello")
         self.create_listener_table()
         self.create_artist_table()
-        #self.create_song_table()
-        #self.create_album_table()
+        self.create_song_table()
+        self.create_album_table()
 
 
     def __del__(self):
@@ -20,7 +20,6 @@ class Schema:
         CREATE TABLE IF NOT EXISTS "SONGS" (
           id INTEGER PRIMARY KEY,
           title TEXT,
-          is_deleted boolean,
           album_id INTEGER FOREIGNKEY REFERENCES album(id)
         );
         """
@@ -33,7 +32,6 @@ class Schema:
           id INTEGER PRIMARY KEY,
           title TEXT,
           genre TEXT,
-          is_deleted boolean,
           artist_id INTEGER FOREIGNKEY REFERENCES artist(id)
         );
         """

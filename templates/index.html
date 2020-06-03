@@ -1,0 +1,10 @@
+{% extends "base_template.html" %} {% block style %}
+<style>
+  h4 {
+    margin: 120px auto;
+  }
+</style>
+{% endblock %} {% block content %}
+
+<h4>Welcome, {{ session["username"] }}</h4>
+{% endblock %}

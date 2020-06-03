@@ -1,5 +1,6 @@
 from models.artist_model import ArtistModel
 
+
 class ArtistService:
     def __init__(self):
         self.model = ArtistModel()
@@ -12,3 +13,6 @@ class ArtistService:
 
     def delete(self):
         return self.model.delete()
+
+    def login(self, params):
+        return self.model.login(params["name"], params["surname"])

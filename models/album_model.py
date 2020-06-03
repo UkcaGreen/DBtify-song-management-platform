@@ -1,42 +1,109 @@
-import sqlite3
+import pymysql
 
-TABLENAME = "ALBUMS"
+TABLENAME = "album_table"
 
 
 class AlbumModel:
 
     def __init__(self):
-        self.connection = sqlite3.connect('database/db.sql')
+        self.connection = self.conn = pymysql.connect(
+            "localhost", "root", "", "dbtify")
         self.cursor = self.connection.cursor()
 
     def __del__(self):
         self.connection.commit()
         self.connection.close()
 
-    def create(self, title, genre):
+    def create(self, title, genre, artist_id):
 
-        query = f"""
-        INSERT INTO {TABLENAME} 
-        (title, genre) 
-        VALUES ("{title}","{genre}");
-        """
+        try:
+            query = f"""
+            INSERT INTO {TABLENAME}
+            (title, genre, artist_id)
+            VALUES ("{title}","{genre}","{artist_id}");
+            """
+            self.cursor.execute(query)
 
-        result = self.cursor.execute(query)
+            query = f"""
+            SELECT id 
+            FROM {TABLENAME}
+            WHERE title="{title}" AND genre="{genre}" AND artist_id="{artist_id}";
+            """
+            self.cursor.execute(query)
 
-        return "OK"
+            album_id = self.cursor.fetchone()[0]
+        except:
+            album_id = None
+
+        return album_id
+
+    def update(self, _id, title, genre):
+
+        try:
+            query = f"""
+            UPDATE {TABLENAME}
+            SET title="{title}", genre="{genre}"
+            WHERE id="{_id}"; 
+            """
+            self.cursor.execute(query)
+        except:
+            pass
 
     def list(self):
 
         query = f"""
-        SELECT *
-        FROM {TABLENAME};
+        SELECT 
+        album_table.id AS album_id,
+        album_table.title AS album_title,
+        album_table.genre AS album_genre,
+        CONCAT(artist_table.name, ' ',artist_table.surname) AS artist,
+        NOT ISNULL(album_like_table.listener_id) AS liked
+        FROM album_table
+        INNER JOIN artist_table ON album_table.artist_id = artist_table.id
+        LEFT JOIN album_like_table ON album_like_table.album_id = album_table.id;
         """
 
         self.cursor.execute(query)
 
-        elements = self.cursor.fetchall()
+        albums = self.cursor.fetchall()
 
-        result = [{"id": e[0], "title": e[1], "genre": e[2]} for e in elements]
+        result = [{
+            "album_id": album[0],
+            "album_title": album[1],
+            "album_genre": album[2],
+            "artist": album[3],
+            "is_liked": album[4]
+        } for album in albums]
+
+        return result
+
+    def get_by_id(self, album_id):
+
+        query = f"""
+        SELECT 
+        album_table.id AS album_id,
+        album_table.title AS album_title,
+        album_table.genre AS album_genre,
+        CONCAT(artist_table.name, ' ',artist_table.surname) AS artist,
+        NOT ISNULL(album_like_table.listener_id) AS liked
+        FROM album_table
+        INNER JOIN artist_table ON album_table.artist_id = artist_table.id
+        LEFT JOIN album_like_table ON album_like_table.album_id = album_table.id
+        WHERE album_table.id={album_id}
+        LIMIT 1;
+        """
+
+        self.cursor.execute(query)
+
+        album = self.cursor.fetchall()[0]
+
+        result = {
+            "album_id": album[0],
+            "album_title": album[1],
+            "album_genre": album[2],
+            "artist": album[3],
+            "is_liked": album[4]
+        }
 
         return result
 
@@ -48,6 +115,28 @@ class AlbumModel:
         WHERE id={_id};
         """
 
+        self.cursor.execute(query)
+
+        return "OK"
+
+    def like(self, album_id, listener_id):
+
+        query = f"""    
+        INSERT INTO album_like_table
+        (album_id, listener_id) 
+        VALUES ("{album_id}","{listener_id}");
+        """
+        self.cursor.execute(query)
+
+        return "OK"
+
+    def unlike(self, album_id, listener_id):
+
+        query = f"""    
+        DELETE 
+        FROM album_like_table
+        WHERE album_id='{album_id}' AND listener_id='{listener_id}';
+        """
         self.cursor.execute(query)
 
         return "OK"

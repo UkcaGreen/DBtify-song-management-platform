@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect, url_for, session
 from services.listener_service import ListenerService
 
 listener_bp = Blueprint("listener_bp", __name__)
@@ -18,3 +18,17 @@ def create():
 @listener_bp.route('/delete', methods=["GET"])
 def delete():
     return ListenerService().delete()
+
+
+@listener_bp.route('/login', methods=["POST"])
+def login():
+    form = request.form
+    listener_info = ListenerService().login(form)
+
+    session["id"] = listener_info["id"]
+    session["username"] = listener_info["username"]
+    session["email"] = listener_info["email"]
+    session["type"] = "listener"
+    session["state"] = True
+
+    return redirect(url_for('index'))

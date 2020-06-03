@@ -6,22 +6,22 @@ class SongService:
         self.model = SongModel()
 
     def create(self, params):
-        return self.model.create(params["title"])
+        return self.model.create(params["song_title"], params["album_id"], params["artist_id"], params["other_artists"])
 
     def update(self, params):
-        return self.model.update(params["id"], params["title"])
+        return self.model.update(params["song_id"], params["song_title"])
 
-    def list(self, params):
-        if params["artist"] is not None and params["album"] is not None:
-            pass
-        elif params["artist"] is not None:
-            result = self.model.list_by_artist(params["artist"])
-        elif params["album"] is not None:
-            result = self.model.list_by_album(params["album"])
-        else:
-            result = self.model.list_all()
+    def list(self):
+        return self.model.list()
 
-        return result
+    def get_by_album_id(self, album_id):
+        return self.model.get_by_album_id(album_id)
 
     def delete(self, _id):
         return self.model.delete(_id)
+
+    def like(self, params):
+        return self.model.like(params["song_id"], params["listener_id"])
+
+    def unlike(self, params):
+        return self.model.unlike(params["song_id"], params["listener_id"])

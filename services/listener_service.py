@@ -1,5 +1,6 @@
 from models.listener_model import ListenerModel
 
+
 class ListenerService:
     def __init__(self):
         self.model = ListenerModel()
@@ -12,3 +13,6 @@ class ListenerService:
 
     def delete(self):
         return self.model.delete()
+
+    def login(self, params):
+        return self.model.login(params["username"], params["email"])

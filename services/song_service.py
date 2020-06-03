@@ -1,3 +1,4 @@
+from flask import session
 from models.song_model import SongModel
 
 
@@ -12,10 +13,16 @@ class SongService:
         return self.model.update(params["song_id"], params["song_title"])
 
     def list(self):
-        return self.model.list()
+        return self.model.list(session["id"])
+
+    def list_by_popularity(self):
+        return self.model.list_by_popularity(session["id"])
+
+    def list_liked(self):
+        return self.model.list_liked(session["id"])
 
     def get_by_album_id(self, album_id):
-        return self.model.get_by_album_id(album_id)
+        return self.model.get_by_album_id(album_id, session["id"])
 
     def delete(self, _id):
         return self.model.delete(_id)

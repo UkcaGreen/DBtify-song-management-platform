@@ -51,6 +51,7 @@
       <th scope="col">Title</th>
       <th scope="col">Album</th>
       <th scope="col">Artists</th>
+      <th scope="col">Total Likes</th>
       <th scope="col"></th>
     </tr>
   </thead>
@@ -61,6 +62,7 @@
       <td>{{ song["song_title"] }}</td>
       <td>{{ song["album_title"] }}</td>
       <td>{{ song["artist_names"] }}</td>
+      <th scope="col">{{ song["total_likes"] }}</th>
       <td>
         <div class="button-container d-flex justify-content-end">
           {% if song['is_liked'] == 1 %}

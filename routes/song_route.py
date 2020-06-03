@@ -4,12 +4,6 @@ from services.song_service import SongService
 song_bp = Blueprint("song_bp", __name__)
 
 
-@song_bp.route('/list', methods=["GET"])
-def list():
-    context = request.args
-    return jsonify(SongService().list(context))
-
-
 @song_bp.route('/create', methods=["POST"])
 def create():
     context = request.form.to_dict()
@@ -21,7 +15,6 @@ def create():
 @song_bp.route('/update', methods=["POST"])
 def update():
     context = request.form.to_dict()
-    #context["other_artists"] = request.form.getlist("other_artists")
     SongService().update(context)
     return redirect(request.referrer)
 

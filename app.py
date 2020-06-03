@@ -40,6 +40,22 @@ def listener_song():
     return render_template('listener_song.html', context=context)
 
 
+@app.route('/listener/song/popular')
+def listener_song_popular():
+    context = {
+        "songs": SongService().list_by_popularity()
+    }
+    return render_template('listener_song.html', context=context)
+
+
+@app.route('/listener/song/liked')
+def listener_song_liked():
+    context = {
+        "songs": SongService().list_liked()
+    }
+    return render_template('listener_song.html', context=context)
+
+
 @app.route('/listener/album')
 def listener_album():
     context = {

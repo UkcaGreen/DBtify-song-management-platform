@@ -117,10 +117,8 @@ class Schema:
               username varchar(32),
               email varchar(32),
               PRIMARY KEY(id),
-              UNIQUE(
-              username,
-              email
-              )
+              UNIQUE(username),
+              UNIQUE(email)
             );
             """
             self.cursor.execute(query)
@@ -134,7 +132,8 @@ class Schema:
               id INTEGER NOT NULL AUTO_INCREMENT,
               name varchar(32),
               surname varchar(32),
-              PRIMARY KEY(id)
+              PRIMARY KEY(id),
+              UNIQUE (name, surname)
             );
             """
             self.cursor.execute(query)
@@ -151,7 +150,7 @@ class Schema:
               FOREIGN KEY(song_id) REFERENCES song_table(id),
               FOREIGN KEY(artist_id) REFERENCES artist_table(id),
               PRIMARY KEY(id),
-              UNIQUE unique_values (artist_id, song_id)
+              UNIQUE (artist_id, song_id)
             );
             """
             self.cursor.execute(query)

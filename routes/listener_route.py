@@ -25,10 +25,13 @@ def login():
     form = request.form
     listener_info = ListenerService().login(form)
 
-    session["id"] = listener_info["id"]
-    session["username"] = listener_info["username"]
-    session["email"] = listener_info["email"]
-    session["type"] = "listener"
-    session["state"] = True
+    if listener_info is not None:
+        session["id"] = listener_info["id"]
+        session["username"] = listener_info["username"]
+        session["email"] = listener_info["email"]
+        session["type"] = "listener"
+        session["state"] = True
 
-    return redirect(url_for('index'))
+        return redirect(url_for('index'))
+    else:
+        return redirect(url_for('login'))

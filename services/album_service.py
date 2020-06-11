@@ -21,6 +21,9 @@ class AlbumService:
     def list_by_artist_id(self, artist_id):
         return self.model.list_by_artist_id(artist_id, session["id"])
 
+    def list_by_genre(self, genre):
+        return self.model.list_by_genre(genre, session["id"])
+
     def list_liked(self):
         return self.model.list_liked(session["id"])
 
@@ -29,6 +32,9 @@ class AlbumService:
 
     def delete(self, _id):
         return self.model.delete(_id)
+
+    def list_genre(self):
+        return self.model.list_genre()
 
     def like(self, params):
         return self.model.like(params["album_id"], params["listener_id"])

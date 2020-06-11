@@ -17,7 +17,7 @@ class ArtistModel:
     def create(self, name, surname):
 
         query = f"""
-        INSERT INTO {TABLENAME} 
+        INSERT IGNORE INTO {TABLENAME} 
         (name, surname) 
         VALUES ("{name}","{surname}");
         """
@@ -96,12 +96,7 @@ class ArtistModel:
 
     def login(self, name, surname):
 
-        query = f"""    
-        INSERT INTO {TABLENAME} 
-        (name, surname) 
-        VALUES ("{name}","{surname}");
-        """
-        self.cursor.execute(query)
+        self.create(name, surname)
 
         query = f"""    
         SELECT *
@@ -110,11 +105,15 @@ class ArtistModel:
         """
         self.cursor.execute(query)
 
-        element = self.cursor.fetchall()[0]
-        print(element)
+        artist = self.cursor.fetchall()
 
-        result = {"id": element[0],
-                  "name": element[1],
-                  "surname": element[2]}
+        if len(artist) == 0:
+            return None
+        else:
+            artist = artist[0]
+
+        result = {"id": artist[0],
+                  "name": artist[1],
+                  "surname": artist[2]}
 
         return result

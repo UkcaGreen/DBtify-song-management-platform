@@ -16,12 +16,11 @@ class ListenerModel:
     def create(self, username, email):
 
         query = f"""
-        INSERT INTO {TABLENAME} 
+        INSERT IGNORE INTO {TABLENAME} 
         (username, email) 
         VALUES ("{username}","{email}");
         """
-
-        result = self.cursor.execute(query)
+        self.cursor.execute(query)
 
         return "OK"
 
@@ -57,24 +56,24 @@ class ListenerModel:
 
     def login(self, username, email):
 
-        query = f"""    
-        INSERT INTO {TABLENAME} 
-        (username, email) 
-        VALUES ("{username}","{email}");
-        """
-        self.cursor.execute(query)
+        self.create(username, email)
 
         query = f"""    
         SELECT *
         FROM {TABLENAME}
-        WHERE username="{username}" OR email="{email}"
+        WHERE username="{username}" AND email="{email}"
         """
         self.cursor.execute(query)
 
-        element = self.cursor.fetchall()[0]
+        listener = self.cursor.fetchall()
 
-        result = {"id": element[0],
-                  "username": element[1],
-                  "email": element[2]}
+        if len(listener) == 0:
+            return None
+        else:
+            listener = listener[0]
+
+        result = {"id": listener[0],
+                  "username": listener[1],
+                  "email": listener[2]}
 
         return result

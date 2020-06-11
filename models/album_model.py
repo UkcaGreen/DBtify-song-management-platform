@@ -233,6 +233,58 @@ class AlbumModel:
 
         return result
 
+    def list_by_genre(self, genre, current_user):
+
+        query = f"""
+        SELECT 
+        album_table.id AS album_id,
+        album_table.title AS album_title,
+        album_table.genre AS album_genre,
+        CONCAT(artist_table.name, ' ',artist_table.surname) AS artist,
+        EXISTS(SELECT *
+                FROM album_like_table
+                WHERE album_like_table.album_id = album_table.id
+                AND album_like_table.listener_id = "{current_user}") AS liked,
+        (SELECT COUNT(*)
+                FROM album_like_table
+                WHERE album_like_table.album_id = album_table.id
+                ) AS total_likes
+        FROM album_table
+        INNER JOIN artist_table ON album_table.artist_id = artist_table.id
+        LEFT JOIN album_like_table ON album_like_table.album_id = album_table.id
+        WHERE album_table.genre="{genre}";
+        """
+
+        self.cursor.execute(query)
+
+        albums = self.cursor.fetchall()
+
+        result = [{
+            "album_id": album[0],
+            "album_title": album[1],
+            "album_genre": album[2],
+            "artist": album[3],
+            "is_liked": album[4]
+        } for album in albums]
+
+        return result
+
+    def list_genre(self):
+        query = f"""
+        SELECT
+        album_table.genre
+        FROM album_table
+        GROUP BY album_table.genre;
+        """
+
+        self.cursor.execute(query)
+
+        genres = self.cursor.fetchall()
+
+        genres = [genre[0] for genre in genres]
+
+        return genres
+
     def delete(self, _id):
 
         query = f"""

@@ -33,6 +33,9 @@ class SongService:
     def list_by_listener_id(self, listener_id):
         return self.model.list_by_listener_id(listener_id, session["id"])
 
+    def search(self, params):
+        return self.model.search(params["search_text"], session["id"])
+
     def delete(self, _id):
         return self.model.delete(_id)
 

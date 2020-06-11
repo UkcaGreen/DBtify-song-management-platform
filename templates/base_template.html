@@ -65,12 +65,18 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <form class="form-inline my-2 my-lg-0">
+          {% if session["type"] == "listener" %}
+          <form
+            class="form-inline my-2 my-lg-0"
+            action="/listener/song/search"
+            method="POST"
+          >
             <input
               class="form-control form-control-sm mr-sm-2"
               type="search"
               placeholder="Search Song"
               aria-label="Search"
+              name="search_text"
             />
             <button
               class="btn btn-sm btn-outline-success my-2 my-sm-0"
@@ -79,6 +85,7 @@
               Search
             </button>
           </form>
+          {% endif %}
           <ul class="navbar-nav mr-auto d-flex justify-content-end flex-grow-1">
             {% if session["type"] == "artist" %}
             <li class="nav-item active">
@@ -174,11 +181,13 @@
                 aria-labelledby="navbarDropdown"
                 style="max-height: 200px;"
               >
-                <a class="dropdown-item" href="#">Example Genre</a>
-                <a class="dropdown-item" href="#">Example Genre</a>
-                <a class="dropdown-item" href="#">Example Genre</a>
-                <a class="dropdown-item" href="#">Example Genre</a>
-                <a class="dropdown-item" href="#">Example Genre</a>
+                {% for genre in context['genres'] %}
+                <a
+                  class="dropdown-item"
+                  href="/listener/album/genre/{{ genre }}"
+                  >{{ genre }}</a
+                >
+                {% endfor %}
               </div>
             </li>
             {% endif %} {% if session["state"] %}

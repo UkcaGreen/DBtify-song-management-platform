@@ -25,10 +25,13 @@ def login():
     form = request.form
     artist_info = ArtistService().login(form)
 
-    session["id"] = artist_info["id"]
-    session["name"] = artist_info["name"]
-    session["surname"] = artist_info["surname"]
-    session["type"] = "artist"
-    session["state"] = True
+    if artist_info is not None:
+        session["id"] = artist_info["id"]
+        session["name"] = artist_info["name"]
+        session["surname"] = artist_info["surname"]
+        session["type"] = "artist"
+        session["state"] = True
 
-    return redirect(url_for('index'))
+        return redirect(url_for('index'))
+    else:
+        return redirect(url_for('login'))

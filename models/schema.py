@@ -22,6 +22,7 @@ class Schema:
         self.create_album_like_table()
         self.create_trigger_delete_song()
         self.create_trigger_delete_song_artist_relation()
+        self.create_procedure_coartist()
 
     def __del__(self):
         self.conn.commit()
@@ -133,7 +134,7 @@ class Schema:
               name varchar(32),
               surname varchar(32),
               PRIMARY KEY(id),
-              UNIQUE (name, surname)
+              UNIQUE full_name (name, surname)
             );
             """
             self.cursor.execute(query)
@@ -186,6 +187,33 @@ class Schema:
               PRIMARY KEY(id),
               UNIQUE unique_values (listener_id, album_id)
             );
+            """
+            self.cursor.execute(query)
+        except:
+            pass
+
+    def create_procedure_coartist(self):
+        try:
+            query = """
+            CREATE PROCEDURE procedure_coartist(
+            name_param varchar(64),
+            surname_param varchar(64)
+            ) 
+            BEGIN
+                SELECT
+                at2.*
+                FROM
+                artist_table at1
+                LEFT JOIN song_artist_table sat1 ON sat1.artist_id = at1.id
+                LEFT JOIN song_artist_table sat2 ON sat1.song_id = sat2.song_id
+                INNER JOIN artist_table at2 ON sat2.artist_id = at2.id
+                WHERE 
+                at1.name = name_param AND
+                at1.surname = surname_param AND
+                NOT at2.name = name_param AND
+                NOT at2.surname = surname_param
+                GROUP BY sat2.artist_id;
+            END
             """
             self.cursor.execute(query)
         except:

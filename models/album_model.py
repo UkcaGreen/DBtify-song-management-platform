@@ -214,7 +214,7 @@ class AlbumModel:
                 ) AS total_likes
         FROM album_table
         INNER JOIN artist_table ON album_table.artist_id = artist_table.id
-        LEFT JOIN album_like_table ON album_like_table.album_id = album_table.id;
+        LEFT JOIN album_like_table ON album_like_table.album_id = album_table.id
         WHERE album_table.id={album_id}
         LIMIT 1;
         """

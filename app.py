@@ -16,6 +16,8 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = "super-secret-key"
 
+# region general
+
 
 @app.route('/')
 def index():
@@ -32,6 +34,10 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+# endregion
+
+# region listener
 
 
 @app.route('/listener/song/<page>', methods=["GET", "POST"])
@@ -165,6 +171,20 @@ def listener_artist(page):
     return render_template('listener_artist.html', context=context)
 
 
+@app.route('/listener/artist/coartist/<name>/<surname>')
+def listener_coartist(name, surname):
+    artists = ArtistService().list_coartist(name, surname)
+    title = "Artists"
+    genres = AlbumService().list_genre()
+
+    context = {
+        "title": title,
+        "genres": genres,
+        "artists": artists
+    }
+    return render_template('listener_artist.html', context=context)
+
+
 @app.route('/listener/listener')
 def listener_listener():
     title = "Listeners"
@@ -176,6 +196,10 @@ def listener_listener():
         "listeners": ListenerService().list()
     }
     return render_template('listener_listener.html', context=context)
+
+# endregion
+
+# region artist
 
 
 @app.route('/artist/album')
@@ -195,6 +219,8 @@ def artist_album_song(album_id):
         "artists": ArtistService().list()
     }
     return render_template('artist_album_song.html', context=context)
+
+# endregion
 
 
 if __name__ == '__main__':

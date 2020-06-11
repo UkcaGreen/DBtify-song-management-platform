@@ -14,6 +14,9 @@ class ArtistService:
     def list_by_popularity(self):
         return self.model.list_by_popularity()
 
+    def list_coartist(self, name, surname):
+        return self.model.list_coartist(name, surname)
+
     def delete(self):
         return self.model.delete()
 

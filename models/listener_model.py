@@ -34,10 +34,13 @@ class ListenerModel:
 
         self.cursor.execute(query)
 
-        elements = self.cursor.fetchall()
+        listeners = self.cursor.fetchall()
 
-        result = [{"id": e[0], "username": e[1], "email": e[2]}
-                  for e in elements]
+        result = [{
+            "id": listener[0],
+            "username": listener[1],
+            "email": listener[2]
+        } for listener in listeners]
 
         return result
 

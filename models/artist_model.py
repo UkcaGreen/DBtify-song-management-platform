@@ -29,16 +29,57 @@ class ArtistModel:
     def list(self):
 
         query = f"""
-        SELECT *
-        FROM {TABLENAME};
+        SELECT 
+        artist_table.*,
+        SUM(
+        (SELECT COUNT(*)
+                FROM song_like_table
+                WHERE song_like_table.song_id = song_artist_table.song_id
+                )) AS total_likes
+        FROM artist_table
+        INNER JOIN song_artist_table ON artist_table.id = song_artist_table.artist_id
+        GROUP BY artist_table.id;
         """
 
         self.cursor.execute(query)
 
-        elements = self.cursor.fetchall()
+        artists = self.cursor.fetchall()
 
-        result = [{"id": e[0], "name": e[1], "surname": e[2]}
-                  for e in elements]
+        result = [{
+            "id": artist[0],
+            "name": artist[1],
+            "surname": artist[2],
+            "total_likes": artist[3]
+        }for artist in artists]
+
+        return result
+
+    def list_by_popularity(self):
+
+        query = f"""
+        SELECT 
+        artist_table.*,
+        SUM(
+        (SELECT COUNT(*)
+                FROM song_like_table
+                WHERE song_like_table.song_id = song_artist_table.song_id
+                )) AS total_likes
+        FROM artist_table
+        INNER JOIN song_artist_table ON artist_table.id = song_artist_table.artist_id
+        GROUP BY artist_table.id
+        ORDER BY total_likes DESC;
+        """
+
+        self.cursor.execute(query)
+
+        artists = self.cursor.fetchall()
+
+        result = [{
+            "id": artist[0],
+            "name": artist[1],
+            "surname": artist[2],
+            "total_likes": artist[3]
+        }for artist in artists]
 
         return result
 

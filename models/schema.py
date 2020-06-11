@@ -54,6 +54,18 @@ class Schema:
         except:
             pass
 
+    # def create_trigger_delete_song(self):
+    #     try:
+    #         query = """
+    #         CREATE TRIGGER like_album_song BEFORE INSERT ON album_like_table
+    #         FOR EACH ROW BEGIN
+    #           DELETE FROM song_table WHERE song_table.album_id = OLD.id;
+    #         END
+    #         """
+    #         self.cursor.execute(query)
+    #     except:
+    #         pass
+
     def create_trigger_delete_song_artist_relation(self):
         try:
             query = """
@@ -138,7 +150,8 @@ class Schema:
               artist_id INTEGER,
               FOREIGN KEY(song_id) REFERENCES song_table(id),
               FOREIGN KEY(artist_id) REFERENCES artist_table(id),
-              PRIMARY KEY(id)
+              PRIMARY KEY(id),
+              UNIQUE unique_values (artist_id, song_id)
             );
             """
             self.cursor.execute(query)
@@ -171,7 +184,8 @@ class Schema:
               album_id INTEGER,
               FOREIGN KEY(listener_id) REFERENCES listener_table(id),
               FOREIGN KEY(album_id) REFERENCES album_table(id),
-              PRIMARY KEY(id)
+              PRIMARY KEY(id),
+              UNIQUE unique_values (listener_id, album_id)
             );
             """
             self.cursor.execute(query)

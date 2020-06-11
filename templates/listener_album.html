@@ -4,42 +4,9 @@
     text-align: center;
   }
 
-  #album-form {
-    display: flex;
-    width: 30%;
-    margin: 80px auto !important;
-    margin-top: 120px !important;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  #album-form select {
-    width: 100%;
-    margin: 10px;
-  }
-
-  #album-form .text-input {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-  }
-
-  #album-form .text-input input {
-    margin: auto;
-    width: 45%;
-  }
-
-  .modal-body {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .modal-body * {
-    margin: 5px auto !important;
+  .button-container a {
+    margin-left: 10px;
+    width: 60px;
   }
 </style>
 {% endblock %} {% block content %}
@@ -51,20 +18,28 @@
       <th scope="col">Title</th>
       <th scope="col">Genre</th>
       <th scope="col">Artists</th>
+      <th scope="col">Total Likes</th>
       <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
     {% for album in context["albums"] %}
     <tr>
-      <th scope="row">{{ album["album_id"] }}</th>
+      <th scope="row">{{ loop.index }}</th>
       <td>
         {{ album["album_title"] }}
       </td>
       <td>{{ album["album_genre"] }}</td>
       <td>{{ album["artist"] }}</td>
+      <td>{{ album["total_likes"] }}</td>
       <td>
         <div class="button-container d-flex justify-content-end">
+          <a
+            class="btn btn-dark my-2 my-sm-0 btn-sm"
+            href="/listener/song/by/album/{{ album['album_id'] }}"
+          >
+            Songs
+          </a>
           {% if album['is_liked'] == 1 %}
           <a
             class="btn btn-secondary my-2 my-sm-0 btn-sm"

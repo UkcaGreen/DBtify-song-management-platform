@@ -21,8 +21,17 @@ class SongService:
     def list_liked(self):
         return self.model.list_liked(session["id"])
 
-    def get_by_album_id(self, album_id):
-        return self.model.get_by_album_id(album_id, session["id"])
+    def list_by_artist_id(self, artist_id):
+        return self.model.list_by_artist_id(artist_id, session["id"])
+
+    def list_by_artist_id_and_popularity(self, artist_id):
+        return self.model.list_by_artist_id_and_popularity(artist_id, session["id"])
+
+    def list_by_album_id(self, album_id):
+        return self.model.list_by_album_id(album_id, session["id"])
+
+    def list_by_listener_id(self, listener_id):
+        return self.model.list_by_listener_id(listener_id, session["id"])
 
     def delete(self, _id):
         return self.model.delete(_id)

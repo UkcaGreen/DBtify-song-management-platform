@@ -98,7 +98,7 @@
                 Songs
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="/listener/song">All Songs</a>
+                <a class="dropdown-item" href="/listener/song/all">All Songs</a>
                 <a class="dropdown-item" href="/listener/song/popular"
                   >Popular Songs</a
                 >
@@ -121,14 +121,14 @@
                 Albums
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="/listener/album">All Albums</a>
+                <a class="dropdown-item" href="/listener/album/all"
+                  >All Albums</a
+                >
                 <a class="dropdown-item" href="/listener/album/popular"
                   >Popular Albums</a
                 >
                 <div class="dropdown-divider"></div>
-                <a
-                  class="dropdown-item"
-                  href="/listener/album/liked/{{ session['id'] }}"
+                <a class="dropdown-item" href="/listener/album/liked"
                   >Liked Albums</a
                 >
               </div>
@@ -146,7 +146,9 @@
                 Artists
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="/listener/artist">All Artists</a>
+                <a class="dropdown-item" href="/listener/artist/all"
+                  >All Artists</a
+                >
                 <a class="dropdown-item" href="/listener/artist/popular"
                   >Popular Artists</a
                 >

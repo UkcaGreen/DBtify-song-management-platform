@@ -22,3 +22,6 @@ class ArtistService:
 
     def login(self, params):
         return self.model.login(params["name"], params["surname"])
+
+    def get_by_id(self, _id):
+        return self.model.get_by_id(_id)

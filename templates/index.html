@@ -6,5 +6,9 @@
 </style>
 {% endblock %} {% block content %}
 
-<h4>Welcome, {{ session["username"] }}</h4>
+<h4>
+  Hello {% if session["type"] == "artist" %}{{ session["name"] }} {{
+  session["surname"] }}{% elif session["type"] == "listener" %}{{
+  session["username"] }}{% endif %}, welcome to DBtify.
+</h4>
 {% endblock %}

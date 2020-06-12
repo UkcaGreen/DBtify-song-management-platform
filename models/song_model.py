@@ -51,7 +51,7 @@ class SongModel:
         query = f"""
         DELETE
         FROM {TABLENAME}
-        WHERE id='{_id}';
+        WHERE id={_id};
         """
 
         self.cursor.execute(query)
@@ -333,7 +333,11 @@ class SongModel:
         INNER JOIN artist_table ON artist_table.id = song_artist_table.artist_id
         INNER JOIN album_table ON album_table.id = song_table.album_id
         LEFT JOIN song_like_table ON song_like_table.song_id = song_table.id
-        WHERE song_artist_table.artist_id={artist_id}
+        WHERE song_table.id = ANY (
+        SELECT song_artist_table.song_id
+        FROM song_artist_table
+        WHERE song_artist_table.artist_id = {artist_id}
+        )
         GROUP BY song_artist_table.song_id
         ORDER BY total_likes DESC;
         """
@@ -373,7 +377,11 @@ class SongModel:
         INNER JOIN artist_table ON artist_table.id = song_artist_table.artist_id
         INNER JOIN album_table ON album_table.id = song_table.album_id
         LEFT JOIN song_like_table ON song_like_table.song_id = song_table.id
-        WHERE song_artist_table.artist_id={artist_id}
+        WHERE song_table.id = ANY (
+        SELECT song_artist_table.song_id
+        FROM song_artist_table
+        WHERE song_artist_table.artist_id = {artist_id}
+        )
         GROUP BY song_artist_table.song_id;
         """
         self.cursor.execute(query)
@@ -390,18 +398,6 @@ class SongModel:
         } for song in songs]
 
         return result
-
-    def delete(self, _id):
-
-        query = f"""
-        DELETE
-        FROM {TABLENAME}
-        WHERE id={_id};
-        """
-
-        self.cursor.execute(query)
-
-        return "OK"
 
     def like(self, song_id, listener_id):
 

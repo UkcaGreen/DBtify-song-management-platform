@@ -21,13 +21,16 @@ app.secret_key = "super-secret-key"
 
 @app.route('/')
 def index():
-    context = []
+    context = {
+        "genres": AlbumService().list_genre()
+    }
     return render_template('index.html', context=context)
 
 
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    context = []
+    return render_template('login.html', context=context)
 
 
 @app.route('/logout')
@@ -40,6 +43,7 @@ def logout():
 # region listener
 
 
+# region listener/song
 @app.route('/listener/song/<page>', methods=["GET", "POST"])
 def listener_song(page):
     if page == "all":
@@ -71,13 +75,16 @@ def listener_song(page):
 @app.route('/listener/song/by/<page>/<_id>')
 def listener_song_specific(page, _id):
     if page == "artist":
-        title = "Songs of An Artist"
+        artist = ArtistService().get_by_id(_id)
+        title = f"Songs of {artist['name']} {artist['surname']}"
         songs = SongService().list_by_artist_id(_id)
     elif page == "album":
-        title = "Songs of An Album"
+        album = AlbumService().get_by_id(_id)
+        title = f"Songs in the {album['album_title']} album"
         songs = SongService().list_by_album_id(_id)
     elif page == "listener":
-        title = "Songs that are Liked by a Listener"
+        listener = ListenerService().get_by_id(_id)
+        title = f"Songs that are Liked by {listener['username']}"
         songs = SongService().list_by_listener_id(_id)
     else:
         return
@@ -94,7 +101,8 @@ def listener_song_specific(page, _id):
 
 @app.route('/listener/song/by/artist/<_id>/popular')
 def listener_song_artist_popular(_id):
-    title = "Popular Songs"
+    artist = ArtistService().get_by_id(_id)
+    title = f"Popular Songs of {artist['name']} {artist['surname']}"
     songs = SongService().list_by_artist_id_and_popularity(_id)
 
     genres = AlbumService().list_genre()
@@ -105,6 +113,10 @@ def listener_song_artist_popular(_id):
         "songs": songs
     }
     return render_template('listener_song.html', context=context)
+
+# endregion
+
+# region listener/album
 
 
 @app.route('/listener/album/<page>')
@@ -134,13 +146,15 @@ def listener_album(page):
 @app.route('/listener/album/<page>/<key>')
 def listener_album_specific(page, key):
     if page == "artist":
+        artist = ArtistService().get_by_id(key)
+        title = f"Albums of {artist['name']} {artist['surname']}"
         albums = AlbumService().list_by_artist_id(key)
     elif page == "genre":
+        title = str(key) + " Albums"
         albums = AlbumService().list_by_genre(key)
     else:
         return
 
-    title = "Albums of Artist"
     genres = AlbumService().list_genre()
 
     context = {
@@ -150,17 +164,22 @@ def listener_album_specific(page, key):
     }
     return render_template('listener_album.html', context=context)
 
+# endregion
+
+# region listener/artist
+
 
 @app.route('/listener/artist/<page>')
 def listener_artist(page):
     if page == "all":
+        title = "All Artists"
         artists = ArtistService().list()
     elif page == "popular":
+        title = "Popular Artists"
         artists = ArtistService().list_by_popularity()
     else:
         return
 
-    title = "Artists"
     genres = AlbumService().list_genre()
 
     context = {
@@ -174,7 +193,7 @@ def listener_artist(page):
 @app.route('/listener/artist/coartist/<name>/<surname>')
 def listener_coartist(name, surname):
     artists = ArtistService().list_coartist(name, surname)
-    title = "Artists"
+    title = "Artists worked with " + str(name) + " " + str(surname)
     genres = AlbumService().list_genre()
 
     context = {
@@ -185,6 +204,9 @@ def listener_coartist(name, surname):
     return render_template('listener_artist.html', context=context)
 
 
+# endregion
+
+# region listener/listener
 @app.route('/listener/listener')
 def listener_listener():
     title = "Listeners"
@@ -196,6 +218,7 @@ def listener_listener():
         "listeners": ListenerService().list()
     }
     return render_template('listener_listener.html', context=context)
+# endregion
 
 # endregion
 

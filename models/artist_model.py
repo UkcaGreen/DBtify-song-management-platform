@@ -54,6 +54,35 @@ class ArtistModel:
 
         return result
 
+    def get_by_id(self, _id):
+
+        query = f"""
+        SELECT 
+        artist_table.*,
+        SUM(
+        (SELECT COUNT(*)
+                FROM song_like_table
+                WHERE song_like_table.song_id = song_artist_table.song_id
+                )) AS total_likes
+        FROM artist_table
+        LEFT JOIN song_artist_table ON artist_table.id = song_artist_table.artist_id
+        WHERE artist_table.id = {_id} 
+        GROUP BY artist_table.id;
+        """
+
+        self.cursor.execute(query)
+
+        artist = self.cursor.fetchall()[0]
+
+        result = {
+            "id": artist[0],
+            "name": artist[1],
+            "surname": artist[2],
+            "total_likes": artist[3]
+        }
+
+        return result
+
     def list_coartist(self, name, surname):
 
         query = f"""

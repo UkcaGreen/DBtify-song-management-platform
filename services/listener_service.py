@@ -16,3 +16,6 @@ class ListenerService:
 
     def login(self, params):
         return self.model.login(params["username"], params["email"])
+
+    def get_by_id(self, _id):
+        return self.model.get_by_id(_id)

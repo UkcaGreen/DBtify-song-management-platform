@@ -94,7 +94,7 @@
             {% endif %} {% if session["type"] == "listener" %}
             <li class="nav-item dropdown">
               <a
-                class="nav-link dropdown-toggle"
+                class="nav-link dropdown-toggle active"
                 href="#"
                 id="navbarDropdown"
                 role="button"
@@ -117,7 +117,7 @@
             </li>
             <li class="nav-item dropdown">
               <a
-                class="nav-link dropdown-toggle"
+                class="nav-link dropdown-toggle active"
                 href="#"
                 id="navbarDropdown"
                 role="button"
@@ -142,7 +142,7 @@
             </li>
             <li class="nav-item dropdown">
               <a
-                class="nav-link dropdown-toggle"
+                class="nav-link dropdown-toggle active"
                 href="#"
                 id="navbarDropdown"
                 role="button"
@@ -161,12 +161,12 @@
                 >
               </div>
             </li>
-            <li class="nav-item">
+            <li class="nav-item active">
               <a class="nav-link" href="/listener/listener">Listeners</a>
             </li>
             <li class="nav-item dropdown">
               <a
-                class="nav-link dropdown-toggle"
+                class="nav-link dropdown-toggle active"
                 href="#"
                 id="navbarDropdown"
                 role="button"
@@ -191,7 +191,7 @@
               </div>
             </li>
             {% endif %} {% if session["state"] %}
-            <li class="nav-item active">
+            <li class="nav-item">
               <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
             </li>
             {% else %}
@@ -204,7 +204,7 @@
       </nav>
     </header>
     <main>
-      {% block content %} {% endblock %}
+      {{ context["title"] }} {% block content %} {% endblock %}
     </main>
   </body>
 </html>

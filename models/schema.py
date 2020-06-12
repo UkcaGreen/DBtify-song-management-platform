@@ -22,6 +22,8 @@ class Schema:
         self.create_album_like_table()
         self.create_trigger_delete_song()
         self.create_trigger_delete_song_artist_relation()
+        self.create_trigger_remove_deleted_song_from_likes()
+        self.create_trigger_like_songs_of_album()
         self.create_procedure_coartist()
 
     def __del__(self):
@@ -55,17 +57,17 @@ class Schema:
         except:
             pass
 
-    # def create_trigger_delete_song(self):
-    #     try:
-    #         query = """
-    #         CREATE TRIGGER like_album_song BEFORE INSERT ON album_like_table
-    #         FOR EACH ROW BEGIN
-    #           DELETE FROM song_table WHERE song_table.album_id = OLD.id;
-    #         END
-    #         """
-    #         self.cursor.execute(query)
-    #     except:
-    #         pass
+    def create_trigger_remove_deleted_song_from_likes(self):
+        try:
+            query = """
+            CREATE TRIGGER remove_deleted_song_from_likes BEFORE DELETE ON song_table
+            FOR EACH ROW BEGIN
+              DELETE FROM song_like_table WHERE song_like_table.song_id = OLD.id;
+            END
+            """
+            self.cursor.execute(query)
+        except:
+            pass
 
     def create_trigger_delete_song_artist_relation(self):
         try:
@@ -73,6 +75,21 @@ class Schema:
             CREATE TRIGGER delete_song_artist BEFORE DELETE ON song_table
             FOR EACH ROW BEGIN 
               DELETE FROM song_artist_table WHERE song_artist_table.song_id = OLD.id; 
+            END
+            """
+            self.cursor.execute(query)
+        except:
+            pass
+
+    def create_trigger_like_songs_of_album(self):
+        try:
+            query = """
+            CREATE TRIGGER like_songs_of_album AFTER INSERT ON album_like_table
+            FOR EACH ROW BEGIN 
+                INSERT IGNORE INTO song_like_table (song_id, listener_id)
+                SELECT song_table.id, NEW.listener_id
+                FROM song_table
+                WHERE song_table.album_id = NEW.album_id; 
             END
             """
             self.cursor.execute(query)

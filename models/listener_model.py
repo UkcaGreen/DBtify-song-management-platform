@@ -43,6 +43,27 @@ class ListenerModel:
 
         return result
 
+    def get_by_id(self, _id):
+
+        query = f"""
+        SELECT *
+        FROM {TABLENAME}
+        WHERE id = {_id}
+        LIMIT 1;
+        """
+
+        self.cursor.execute(query)
+
+        listener = self.cursor.fetchall()[0]
+
+        result = {
+            "id": listener[0],
+            "username": listener[1],
+            "email": listener[2]
+        }
+
+        return result
+
     def delete(self):
 
         query = f"""

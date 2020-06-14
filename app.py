@@ -72,20 +72,23 @@ def listener_song(page):
     return render_template('listener_song.html', context=context)
 
 
-@app.route('/listener/song/by/<page>/<_id>')
-def listener_song_specific(page, _id):
+@app.route('/listener/song/by/<page>/<key>')
+def listener_song_specific(page, key):
     if page == "artist":
-        artist = ArtistService().get_by_id(_id)
+        artist = ArtistService().get_by_id(key)
         title = f"Songs of {artist['name']} {artist['surname']}"
-        songs = SongService().list_by_artist_id(_id)
+        songs = SongService().list_by_artist_id(key)
     elif page == "album":
-        album = AlbumService().get_by_id(_id)
+        album = AlbumService().get_by_id(key)
         title = f"Songs in the {album['album_title']} album"
-        songs = SongService().list_by_album_id(_id)
+        songs = SongService().list_by_album_id(key)
     elif page == "listener":
-        listener = ListenerService().get_by_id(_id)
+        listener = ListenerService().get_by_id(key)
         title = f"Songs that are Liked by {listener['username']}"
-        songs = SongService().list_by_listener_id(_id)
+        songs = SongService().list_by_listener_id(key)
+    elif page == "genre":
+        title = str(key) + " Songs"
+        songs = SongService().list_by_genre(key)
     else:
         return
 
@@ -149,9 +152,6 @@ def listener_album_specific(page, key):
         artist = ArtistService().get_by_id(key)
         title = f"Albums of {artist['name']} {artist['surname']}"
         albums = AlbumService().list_by_artist_id(key)
-    elif page == "genre":
-        title = str(key) + " Albums"
-        albums = AlbumService().list_by_genre(key)
     else:
         return
 

@@ -15,6 +15,7 @@ def create():
 @song_bp.route('/update', methods=["POST"])
 def update():
     context = request.form.to_dict()
+    context["other_artists"] = request.form.getlist("other_artists")
     SongService().update(context)
     return redirect(request.referrer)
 

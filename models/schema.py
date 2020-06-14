@@ -24,6 +24,7 @@ class Schema:
         self.create_trigger_delete_song_artist_relation()
         self.create_trigger_remove_deleted_song_from_likes()
         self.create_trigger_like_songs_of_album()
+        self.create_trigger_remove_deleted_album_from_likes()
         self.create_procedure_coartist()
 
     def __del__(self):
@@ -69,6 +70,18 @@ class Schema:
         except:
             pass
 
+    def create_trigger_remove_deleted_album_from_likes(self):
+        try:
+            query = """
+            CREATE TRIGGER remove_deleted_album_from_likes BEFORE DELETE ON album_table
+            FOR EACH ROW BEGIN
+              DELETE FROM album_like_table WHERE album_like_table.album_id = OLD.id;
+            END
+            """
+            self.cursor.execute(query)
+        except:
+            pass
+
     def create_trigger_delete_song_artist_relation(self):
         try:
             query = """
@@ -101,7 +114,7 @@ class Schema:
             query = """
             CREATE TABLE IF NOT EXISTS song_table (
               id INTEGER NOT NULL AUTO_INCREMENT,
-              title varchar(32),
+              title varchar(64),
               album_id INTEGER,
               FOREIGN KEY(album_id) REFERENCES album_table(id),
               PRIMARY KEY(id)
@@ -116,8 +129,8 @@ class Schema:
             query = """
             CREATE TABLE IF NOT EXISTS album_table (
               id INTEGER NOT NULL AUTO_INCREMENT,
-              title varchar(32),
-              genre varchar(32),
+              title varchar(64),
+              genre varchar(64),
               artist_id INTEGER,
               FOREIGN KEY(artist_id) REFERENCES artist_table(id),
               PRIMARY KEY(id)
@@ -132,8 +145,8 @@ class Schema:
             query = """
             CREATE TABLE IF NOT EXISTS listener_table (
               id INTEGER NOT NULL AUTO_INCREMENT,
-              username varchar(32),
-              email varchar(32),
+              username varchar(64),
+              email varchar(64),
               PRIMARY KEY(id),
               UNIQUE(username),
               UNIQUE(email)
@@ -148,8 +161,8 @@ class Schema:
             query = """
             CREATE TABLE IF NOT EXISTS artist_table (
               id INTEGER NOT NULL AUTO_INCREMENT,
-              name varchar(32),
-              surname varchar(32),
+              name varchar(64),
+              surname varchar(64),
               PRIMARY KEY(id),
               UNIQUE full_name (name, surname)
             );
@@ -218,7 +231,19 @@ class Schema:
             ) 
             BEGIN
                 SELECT
-                at2.*
+                at2.*,
+                (
+                SELECT 
+                SUM(
+                (SELECT COUNT(*)
+                        FROM song_like_table
+                        WHERE song_like_table.song_id = song_artist_table.song_id
+                        )) AS total_likes
+                FROM artist_table at0
+                LEFT JOIN song_artist_table ON at0.id = song_artist_table.artist_id
+                WHERE at0.id = sat2.artist_id
+                GROUP BY at0.id
+                ) AS total_likes
                 FROM
                 artist_table at1
                 LEFT JOIN song_artist_table sat1 ON sat1.artist_id = at1.id

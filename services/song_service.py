@@ -7,10 +7,10 @@ class SongService:
         self.model = SongModel()
 
     def create(self, params):
-        return self.model.create(params["song_title"], params["album_id"], params["artist_id"], params["other_artists"])
+        return self.model.create(params["song_title"], params["album_id"], session["id"], params["other_artists"])
 
     def update(self, params):
-        return self.model.update(params["song_id"], params["song_title"])
+        return self.model.update(params["song_id"], params["song_title"], session["id"], params["other_artists"])
 
     def list(self):
         return self.model.list(session["id"])
@@ -32,6 +32,9 @@ class SongService:
 
     def list_by_listener_id(self, listener_id):
         return self.model.list_by_listener_id(listener_id, session["id"])
+
+    def list_by_genre(self, genre):
+        return self.model.list_by_genre(genre, session["id"])
 
     def search(self, params):
         return self.model.search(params["search_text"], session["id"])

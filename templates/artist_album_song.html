@@ -164,6 +164,20 @@
                     value="{{ song['song_title'] }}"
                     required
                   />
+                  <select
+                    multiple
+                    class="form-control"
+                    name="other_artists"
+                    id="artist-select"
+                  >
+                    <option value="" disabled>Select Co-Artists</option>
+                    {% for artist in context["artists"] %} {% if artist["id"] !=
+                    session["id"] %}
+                    <option value="{{ artist['id'] }}"
+                      >{{ artist["name"] }} {{ artist["surname"] }}</option
+                    >
+                    {% endif %} {% endfor %}
+                  </select>
                 </div>
                 <div class="modal-footer">
                   <button

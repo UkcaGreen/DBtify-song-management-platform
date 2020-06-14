@@ -149,7 +149,7 @@
   <tbody>
     {% for album in context["albums"] %}
     <tr>
-      <th scope="row">{{ album["album_id"] }}</th>
+      <th scope="row">{{ loop.index }}</th>
       <td>
         <a href="/artist/album/{{ album['album_id'] }}"
           >{{ album["album_title"] }}</a

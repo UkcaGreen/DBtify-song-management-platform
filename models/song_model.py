@@ -58,15 +58,36 @@ class SongModel:
 
         return "OK"
 
-    def update(self, _id, title):
+    def update(self, song_id, title, artist_id, other_artists):
 
         query = f"""
             UPDATE {TABLENAME}
             SET title="{title}"
-            WHERE id="{_id}";
+            WHERE id="{song_id}";
         """
 
-        result = self.cursor.execute(query)
+        self.cursor.execute(query)
+
+        query = f"""
+            DELETE 
+            FROM song_artist_table
+            WHERE song_id="{song_id}";
+        """
+
+        self.cursor.execute(query)
+
+        if(type(other_artists) == str):
+            other_artists = [other_artists]
+
+        artists = [artist_id] + other_artists
+
+        for artist_id in artists:
+            query = f"""
+            INSERT IGNORE INTO song_artist_table
+            (song_id, artist_id)
+            VALUES ("{song_id}","{artist_id}");
+            """
+            result = self.cursor.execute(query)
 
         return "OK"
 
@@ -132,6 +153,47 @@ class SongModel:
         INNER JOIN album_table ON album_table.id = song_table.album_id
         LEFT JOIN song_like_table ON song_like_table.song_id = song_table.id
         WHERE song_table.title LIKE "%{search_text}%"
+        GROUP BY song_artist_table.song_id
+        ORDER BY song_table.id;
+        """
+
+        self.cursor.execute(query)
+
+        songs = self.cursor.fetchall()
+
+        result = [{
+            "song_id": song[0],
+            "song_title": song[1],
+            "album_title": song[2],
+            "artist_names": song[3],
+            "is_liked": song[4],
+            "total_likes": song[5]
+        } for song in songs]
+
+        return result
+
+    def list_by_genre(self, genre, current_user):
+
+        query = f"""
+        SELECT
+        song_table.id AS song_id,
+        song_table.title AS song_title,
+        album_table.title AS album_title,
+        GROUP_CONCAT(DISTINCT CONCAT(artist_table.name, ' ',artist_table.surname)) AS full_names,
+        EXISTS(SELECT *
+        FROM song_like_table
+        WHERE song_like_table.song_id = song_table.id
+        AND song_like_table.listener_id = "{current_user}") AS liked,
+        (SELECT COUNT(*)
+        FROM song_like_table
+        WHERE song_like_table.song_id = song_table.id
+        ) AS total_likes
+        FROM song_table
+        INNER JOIN song_artist_table ON song_table.id = song_artist_table.song_id
+        INNER JOIN artist_table ON artist_table.id = song_artist_table.artist_id
+        INNER JOIN album_table ON album_table.id = song_table.album_id
+        LEFT JOIN song_like_table ON song_like_table.song_id = song_table.id
+        WHERE album_table.genre = "{genre}"
         GROUP BY song_artist_table.song_id
         ORDER BY song_table.id;
         """

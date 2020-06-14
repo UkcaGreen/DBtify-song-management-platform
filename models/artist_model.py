@@ -96,7 +96,8 @@ class ArtistModel:
         result = [{
             "id": artist[0],
             "name": artist[1],
-            "surname": artist[2]
+            "surname": artist[2],
+            "total_likes": artist[3]
         }for artist in artists]
 
         return result
@@ -148,7 +149,7 @@ class ArtistModel:
         query = f"""    
         SELECT *
         FROM {TABLENAME}
-        WHERE name="{name}" OR surname="{surname}"
+        WHERE name="{name}" AND surname="{surname}"
         """
         self.cursor.execute(query)
 
